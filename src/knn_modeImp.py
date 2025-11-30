@@ -35,7 +35,7 @@ X = X.dropna(axis=1, thresh=threshold)
 le = LabelEncoder()
 y = le.fit_transform(y)
 
-# Encode features
+# Create encoders for features
 numeric_features = X.select_dtypes(include='float64').columns.to_list()
 categorical_features = X.select_dtypes(include='object').columns.to_list()
 
@@ -53,17 +53,19 @@ transformer = ColumnTransformer(
     ]
 )
 
-X = transformer.fit_transform(X)
-
 # Split training and test 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
+X_train = transformer.fit_transform(X_train)
+X_test = transformer.transform(X_test)
+
 # Impute missing values with mode
 imputer = SimpleImputer(strategy="most_frequent", add_indicator=True)
 imputer.fit(X_train)
 
+# Encode features
 X_train = imputer.transform(X_train)
 X_test = imputer.transform(X_test)
 
