@@ -1,0 +1,228 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{From Cap To Stalk: Predicting Mushroom Toxicity with ML Models\\
+}
+
+\makeatletter
+\newcommand{\linebreakand}{%
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+
+\author{
+  \IEEEauthorblockN{Kevin Nevarez}
+  \IEEEauthorblockA{\textit{Computer Science Department} \\
+    \textit{Cal Poly Pomona}\\
+    Pomona, USA \\
+    }
+  \and
+  \IEEEauthorblockN{Gerardo Gutierrez}
+  \IEEEauthorblockA{\textit{Computer Science Department} \\
+    \textit{Cal Poly Pomona}\\
+    Pomona, USA \\
+    }
+  \and
+  \IEEEauthorblockN{Brian Nguyen}
+  \IEEEauthorblockA{\textit{Computer Science Department} \\
+    \textit{Cal Poly Pomona}\\
+    Pomona, USA \\
+    }
+  \linebreakand
+  \IEEEauthorblockN{Vinson Liu}
+  \IEEEauthorblockA{\textit{Computer Science Department} \\
+    \textit{Cal Poly Pomona}\\
+    Pomona, USA \\
+    }
+  \and
+  \IEEEauthorblockN{Chelsea Kathleen Ocampo}
+  \IEEEauthorblockA{\textit{Computer Science Department} \\
+    \textit{Cal Poly Pomona}\\
+    Pomona, USA \\
+    }
+}
+
+\maketitle
+
+\begin{abstract}
+Accurately identifying mushroom toxicity is important for public safety, agricultural decision-making, and regulatory oversight. Machine learning provides a scalable approach for determining which physical characteristics are most informative in distinguishing poisonous mushrooms from edible ones. In this study, we evaluate several classification algorithms, including Support Vector Machines, K-Nearest Neighbors, Random Forests, Logistic Regression, Naive Bayes, and Decision Trees, to predict mushroom toxicity and identify influential features. Using a simulated dataset of 61{,}069 mushroom instances derived from 173 species, we compare model performance and analyze feature contributions. Our findings highlight characteristics such as stem width, gill attachment, and gill color as potential key indicators of toxicity. While the dataset is simulated rather than field-collected, this work establishes a foundation for future studies that incorporate real-world biological data to improve practical applicability and public guidance.
+\end{abstract}
+
+
+\begin{IEEEkeywords}
+Classification algorithms, Support vector machines
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Accurate classification of mushroom toxicity has practical implications for the general public, agricultural stakeholders, and regulatory agencies. For individuals who forage or consume wild mushrooms, improved guidance can reduce the risk of accidental poisoning. In agricultural and ecological workflows, identifying species characteristics associated with toxicity can support monitoring efforts and inform policy decisions. This project aims to use machine learning to classify mushrooms as edible or poisonous based on their physical features and to determine which characteristics contribute most to toxicity prediction.
+
+The dataset used in this study is the Poison Mushroom Dataset provided by the University of California, Irvine Machine Learning Repository. The data consists of 61{,}069 simulated mushroom instances modeled after 173 species described in the reference text \emph{Mushrooms and Toadstools}. Each instance includes 20 physical features, and mushrooms are labeled as either edible or poisonous. Species with uncertain or ambiguous edibility are conservatively categorized as poisonous to reflect real-world safety practices.
+
+\section{Related Works}
+In recent years, many studies have been performed in advance of determining the toxicity of mushrooms.
+
+Creating the data set we have, Wagner et. al [2] utilizes a similar previous data set as inspiration and using references from primary textbooks about mushrooms to design and simulate instances of mushrooms. In the same paper, they used machine learning models such as Gaussian Naive Bayes, Random Forest, Linear Discriminant Analysis and Logistic Regression to analyze the newly created data set. The results of their paper are quite similar to ours: Random Forest being the most accurate model, and Naive Bayes being the least. 
+
+Comparatively, Nithya et. al [3] as well as Morshed et al [4] makes use of many different models to work on the same data set. Their preprocessing were similar than theirs in the way they handled the missing values but they did not specify the encoding method they used. The results they had similarly was that their top performers were KNN, and Linear SVM. 
+
+We build on their work with putting most of the improvement on preprocessing. By creating our own KNN imputer and standardizing the data, the data is more tailored to be fed to the models. Not only did we get similarly accurate results from their top models (RF, KNN, SVM) but we also were able to model another accurate classifier (Decision Tree) different from their results.  
+
+\section{Dataset Details}
+The data set for this project is a tabular dataset of simulated mushrooms and toadstools from the University of California Irvine Machine Learning Repository [1]. The features of the dataset include mushroom species, physical features of each part of the mushroom, habitat and season growth information, etc. The target or class of the data set specifies if a specific mushroom instance is edible or poisonous (binary classification).
+
+The data set contains 61,068 instances of mushrooms, with 20 different features for each instance - 17 categorical and 3 numeric.  There are 173 different species of mushrooms present in the data set. The class distribution of the data set is as follows: (1) Poisonous - 33,888 instances (55.49\%), (2) Edible - 27,181 instances (44.51\%).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{class_distribution.png}
+    \caption{Class Distribution}
+    \label{fig:class distribution}
+\end{figure}
+
+\subsection{Preprocessing}
+
+\subsubsection{Imputation}
+We dropped the following features with over 50\% missing values: \textit{stem root, veil type, veil color, stem surface, spore print color}. Then we split the data into 80/20 train and test splits before imputation to prevent data leakage. 
+
+For imputation, we chose to use KNN imputation as opposed to a simple imputation methods such as mode imputation. This was to get a more accurate representation of the missing data. 
+
+We created a custom k-nearest neighbors imputer which locally standardized numeric columns and one hot encoded the categorical columns before using  k=5 nearest neighbors to perform KNN imputation. Only categorical features were missing values so our KNN imputer used majority voting to predict the missing values. 
+
+The remaining columns of the training data with no missing values were fitted into the KNN imputer. Then, the same fitted imputer was used to impute the remaining columns with missing values in both the training and test data. 
+
+\subsubsection{Standardization}
+We then used Sklearn's StandardScaler to standardize numeric features. We fit a standard scaler to the training data and standardized the numeric values in both the training data and test data using the same fitted scaler. Standardization helps models like KNN and SVM, that use distance, to be less sensitive to noise in numeric features. 
+
+\subsubsection{Encoding Categorical Features}
+The categorical features were encoded using Sklearn's OneHotEncoder.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{missing_values_per_column.png}
+    \caption{Missing Values Per Feature}
+    \label{fig:missing}
+\end{figure}
+
+\section{Methodology}
+
+We implemented multiple machine learning models to classify mushrooms as edible or poisonous. All models were trained using the preprocessed and encoded dataset described in the previous section. The models selected for this study include K-Nearest Neighbors (KNN), Naive Bayes, Decision Trees, Random Forests, Support Vector Machines (SVM), and Logistic Regression. These models were chosen to represent a diverse set of classification approaches, including linear, nonlinear, distance-based, probabilistic, and ensemble methods. Model performance was later evaluated using confusion matrices and the following classification metrics: precision, recall, F1-score, and accuracy.
+
+\subsection{Logistic Regression}
+A Logistic Regression classifier was trained to provide a linear baseline model for comparison. We used an $\ell_2$-regularization to reduce overfitting with the regularization hyperparameter C=1.0. 
+
+\subsection{Decision Tree}
+A Decision Tree classifier was trained using the one-hot encoded features. Decision Trees can capture nonlinear relationships and interactions between categorical attributes. To identify appropriate hyperparameters and reduce the risk of overfitting, we performed a grid search with 5-fold cross-validation. The hyperparameter grid included:{ 'max\_depth': [5, 10, 15, 20], 'min\_samples\_split': [2, 5, 10, 20], 'min\_samples\_leaf': [1, 2, 5, 10], 'criterion': ['entropy', 'gini'] }. 
+This allowed us to choose a tree size and splitting strategy that balanced model complexity and generalization ability.
+
+\subsection{Naive Bayes}
+Because our dataset contains a mix of numeric and categorical features, we adopted a simpler approach for this classifier. Specifically, only the categorical features were used, and the three numeric features were removed. A Bernoulli Naive Bayes model was then trained on the one-hot encoded categorical data, since it aligns well with its requirement of binary features.
+
+\subsection{Support Vector Machines}
+
+\subsubsection{Linear SVM}
+
+A linear Support Vector Machine was trained using hinge loss and a regularization parameter of $C=1$. The linear SVM serves as another baseline linear classifier. The chosen regularization parameter allows misclassification to prevent overfitting
+
+\subsubsection{RBF SVM}
+
+ We additionally trained an SVM with a radial basis function (RBF) kernel. The RBF kernel allows the classifier to learn more complex decision boundaries than the linear model. We used hinge loss and again set $C=1$ to maintain consistency with the linear SVM. 
+
+
+
+\subsection{KNN}
+For the K-Nearest Neighbors (KNN) algorithm, we first trained a model then evaluated the optimal k value that would minimize the error rate. This had the challenge of being computationally expensive. At first we planned to use grid search with five-fold cross-validation. Unfortunately this did not solve the computational expense problem. Because of this, we then decided to use the elbow method with a stopping criteria. The program would stop the evaluation if there was a consecutive decrease, i, in error rate as a result of ascending k values. The program additionally only tested odd values of k to avoid variance due to ties. At first we used a large value of i to avoid potential local maxima in error rate. The results displayed the lower values of k resulted in a near-perfect accuracy measurement for KNN. In fact, using i = 10 yielded the following graph.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{KNN.png}
+    \caption{Graph of KNN results}
+    \label{fig:KNN}
+\end{figure}
+With the model, k=1 was the optimal value for k as seen in Fig. 3.
+
+\subsection{Random Forest}
+
+Random forest was chosen for its ability at capturing feature importances and for how robust it is to noise and overfitting. For the model, we simply utilized a default Random Forest classifier with 100 trees (n\_estimators = 100) and a fixed random state (random\_state = 42) for reproducibility. As this configuration gave ideal results in the starting phase, we decided to simply keep the default hyper-parameters.
+
+\subsection{Feature Importance}
+We also decided to analyze the feature importance present in our top model, the Random Forest (RF) model. Feature importance shows which features are contributing the most significantly towards predictions. There were two ways of extracting the feature importances within the RF model: (1) Mean Decrease in Impurity (MDI), and (2) Permutation. MDI offers a fast calculation but is biased towards high cardinality features (features with many unique values). In comparison, permutation is much more computationally heavy, but is more reliable and accurate as it does not suffer the same biases that MDI has. Because of this, the diagram that would be included in this paper would be with the permutation algorithm (Fig. 5).
+
+\section{Results}
+\begin{table*}[t]
+\centering
+\caption{All Model Results}
+\includegraphics[width=\textwidth]{Results_Table.png}
+\label{fig:resultstable}
+\end{table*}
+We used the classification metrics, precision, recall, F-1 Score, and accuracy for each model. 
+\subsection{Decision Tree}
+
+The Decision Tree classifier achieved a precision of 0.9976, recall of 0.9965, and F1-score of 0.9971 for edible mushrooms, and a precision of 0.9972, recall of 0.9981, and F1-score of 0.9976 for poisonous mushrooms. The overall accuracy was 0.9974.
+
+\subsection{Naive Bayes}
+
+Naive Bayes obtained a precision, recall, and F1-score of 0.69 for edible mushrooms and 0.75 for poisonous mushrooms, resulting in an overall accuracy of 0.72.
+
+\subsection{Logistic Regression}
+Logistic Regression produced a precision of 0.75, recall of 0.76, and F1-score of 0.75 for edible mushrooms, and a precision of 0.80, recall of 0.79, and F1-score of 0.80 for poisonous mushrooms. The overall accuracy was 0.78.
+
+\subsection{Support Vector Machines}
+The Linear SVM achieved a precision, recall, and F1-score of 0.77 for edible mushrooms, and 0.81, 0.82, and 0.82 respectively for poisonous mushrooms, with an overall accuracy of 0.80.
+The RBF SVM achieved a precision, recall, and F1-score of 0.94 for edible mushrooms and 0.95 for poisonous mushrooms, with an overall accuracy of 0.95. 
+
+\subsection{KNN}
+The KNN classifier achieved a precision of 1.0000, recall of 0.9998, and F1-score of 0.9999 for edible mushrooms, and a precision of 0.9997, recall of 1.0000, and F1-score of 0.9999 for poisonous mushrooms. The overall accuracy was 0.9999.
+
+\subsection{Random Forest}
+As seen in Table 1, the basic Random Forest (RF) model gave the most accurate predictions out of the many different models we tested. The Random Forest model achieved a recall of 0.9998, and a precision and F1-score of 1.0000 for edible mushrooms, and a precision of 0.9999, recall of 1.0000, and F1-score of 0.9999 for poisonous mushrooms. The overall accuracy was 0.9999. Of the 12214 instances, the RF model only predicted 1 instance wrong (Fig. 4).
+
+\subsection{Feature Importance}
+As seen in Fig. 5, the top features that contribute to the model include `stem-color`, `gill-attachment`, and `stem-width` while bottom features include `has-ring`, `habitat`, and `does-bruise-or-bleed`.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{RF_Confusion_Matrix.png}
+    \caption{Confusion Matrix for Random Forest Model}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{RF_FI_Permutation.png}
+    \caption{Top features for the Random Forest model with the permutation algorithm}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\section{Discussion}
+
+In conclusion,  random forests was showed to be the best model for classifying poisonous mushrooms with KNN and decision trees following closely with all three models having near perfect accuracy. 
+
+As seen within Fig 5., the most important features for predicting toxicity are stem color, gill attachment, and stem width. So these features should be considered more heavily by those working in agriculture and regulatory agencies like the FDA when creating public guidelines. 
+
+In future work we could  evaluate the models on purely real data to verify that the models have real world application in the agricultural industry. 
+
+\begin{thebibliography}{00}
+\bibitem{b1} Wagner, D., Heider, D., and Hattab, G. (2021). Secondary Mushroom [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5FP5Q.
+
+\bibitem{b2} Wagner, D., Heider, D., and Hattab, G. (2021). Mushroom data creation, curation, and simulation to support classification tasks. Scientific Reports, 11.
+\bibitem{b3} Nithya, B., Asha, V., Sreeja, S.P., Khan, A., Mohapatra, A., and Patro, A. (2025). Edible Mushroom Classification with Machine Learning Techniques. 2025 5th International Conference on Pervasive Computing and Social Networking (ICPCSN), 266-271.
+\bibitem{b4} M. S. Morshed, F. Bin Ashraf, M. U. Islam and M. S. R. Shafi, "Predicting Mushroom Edibility with Effective Classification and Efficient Feature Selection Techniques," 2023 3rd International Conference on Robotics, Electrical and Signal Processing Techniques (ICREST), Dhaka, Bangladesh, 2023, pp. 1-5, doi: 10.1109/ICREST57604.2023.10070049.
+\end{thebibliography}
+
+\end{document}
