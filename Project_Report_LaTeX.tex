@@ -12,9 +12,9 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
-
 \title{From Cap To Stalk: Predicting Mushroom Toxicity with ML Models\\
 }
+
 
 \makeatletter
 \newcommand{\linebreakand}{%
@@ -66,6 +66,8 @@ Accurately identifying mushroom toxicity is important for public safety, agricul
 \begin{IEEEkeywords}
 Classification algorithms, Support vector machines
 \end{IEEEkeywords}
+
+
 
 \section{Introduction}
 
@@ -145,7 +147,7 @@ A linear Support Vector Machine was trained using hinge loss and a regularizatio
 
 
 \subsection{KNN}
-For the K-Nearest Neighbors (KNN) algorithm, we first trained a model then evaluated the optimal k value that would minimize the error rate. This had the challenge of being computationally expensive. At first we planned to use grid search with five-fold cross-validation. Unfortunately this did not solve the computational expense problem. Because of this, we then decided to use the elbow method with a stopping criteria. The program would stop the evaluation if there was a consecutive decrease, i, in error rate as a result of ascending k values. The program additionally only tested odd values of k to avoid variance due to ties. At first we used a large value of i to avoid potential local maxima in error rate. The results displayed the lower values of k resulted in a near-perfect accuracy measurement for KNN. In fact, using i = 10 yielded the following graph.
+For the K-Nearest Neighbors (KNN) algorithm, we first trained a model then evaluated the optimal k value that would minimize the error rate. This had the challenge of being computationally expensive. At first we planned to use grid search with five-fold cross-validation. Unfortunately this did not solve the computational expense problem. Because of this, we then decided to use the elbow method with a stopping criteria. The program would stop the evaluation if there was a consecutive decrease, i, in error rate as a result of ascending k values. The program additionally only tested odd values of k to avoid variance due to ties. At first, we used a large value of i to avoid potential local maxima in error rate. The results show that lower values of k resulted in a near-perfect accuracy measurement for KNN. In fact, using i = 10 yielded the graph shown in Fig. 3. With the model, k=1 was the optimal value for k as seen in Fig. 3.
 
 \begin{figure}
     \centering
@@ -153,7 +155,6 @@ For the K-Nearest Neighbors (KNN) algorithm, we first trained a model then evalu
     \caption{Graph of KNN results}
     \label{fig:KNN}
 \end{figure}
-With the model, k=1 was the optimal value for k as seen in Fig. 3.
 
 \subsection{Random Forest}
 
@@ -211,15 +212,17 @@ As seen in Fig. 5, the top features that contribute to the model include `stem-c
 
 \section{Discussion}
 
-In conclusion,  random forests was showed to be the best model for classifying poisonous mushrooms with KNN and decision trees following closely with all three models having near perfect accuracy. 
+In conclusion, random forests was shown to be the best model for classifying poisonous mushrooms with KNN and decision trees following closely with all three models having near perfect accuracy. 
 
 As seen within Fig 5., the most important features for predicting toxicity are stem color, gill attachment, and stem width. So these features should be considered more heavily by those working in agriculture and regulatory agencies like the FDA when creating public guidelines. 
 
 In future work we could  evaluate the models on purely real data to verify that the models have real world application in the agricultural industry. 
 
+\section{Supplementary Materials}
+Github Repository (contains LaTeX and source code): https://github.com/GerardoG2/PoisonMushroomClassifier
+
 \begin{thebibliography}{00}
 \bibitem{b1} Wagner, D., Heider, D., and Hattab, G. (2021). Secondary Mushroom [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5FP5Q.
-
 \bibitem{b2} Wagner, D., Heider, D., and Hattab, G. (2021). Mushroom data creation, curation, and simulation to support classification tasks. Scientific Reports, 11.
 \bibitem{b3} Nithya, B., Asha, V., Sreeja, S.P., Khan, A., Mohapatra, A., and Patro, A. (2025). Edible Mushroom Classification with Machine Learning Techniques. 2025 5th International Conference on Pervasive Computing and Social Networking (ICPCSN), 266-271.
 \bibitem{b4} M. S. Morshed, F. Bin Ashraf, M. U. Islam and M. S. R. Shafi, "Predicting Mushroom Edibility with Effective Classification and Efficient Feature Selection Techniques," 2023 3rd International Conference on Robotics, Electrical and Signal Processing Techniques (ICREST), Dhaka, Bangladesh, 2023, pp. 1-5, doi: 10.1109/ICREST57604.2023.10070049.
